@@ -73,3 +73,9 @@ ops/backup/.local/
 mail-vue/.env.remote
 mail-vue/src/views/test/
 mail-worker/src/api/test-api.js
+mail-vue/public/tinymce/langs/README.md
+mail-worker/wrangler-staging-probe.jsonc
+ops/vps/Caddyfile.fragment.example
+ops/vps/check-d1-atomicity.mjs
+ops/vps/check-d1.mjs
+ops/vps/init-staging-admin.mjs
