@@ -10,19 +10,15 @@ Wenying mail 是面向个人域名的只收邮件应用，基于 [ayingQAQ/cloud
 
 **收件箱**：同时展示验证码、订单、订阅、普通来信、安全提醒和附件邮件。
 
-[![多类型邮件收件箱](assets/screenshots/inbox.jpg)](assets/screenshots/inbox.jpg)
+[![多类型邮件收件箱](assets/screenshots/inbox.png)](assets/screenshots/inbox.png)
 
 **验证码邮件**：在列表和正文中直接显示复制入口。
 
-[![验证码邮件与一键复制](assets/screenshots/verification.jpg)](assets/screenshots/verification.jpg)
-
-**邮箱与域名**：创建收件地址并管理各邮箱的收信状态。
-
-[![邮箱与域名管理](assets/screenshots/mailboxes.jpg)](assets/screenshots/mailboxes.jpg)
+[![验证码邮件与一键复制](assets/screenshots/verification.png)](assets/screenshots/verification.png)
 
 **数据统计**：查看当前账号的收件、未读和原件用量。
 
-[![邮件数据统计](assets/screenshots/statistics.jpg)](assets/screenshots/statistics.jpg)
+[![邮件数据统计](assets/screenshots/statistics.png)](assets/screenshots/statistics.png)
 
 ## 组件与职责
 
