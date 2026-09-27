@@ -20,20 +20,16 @@ Wenying mail 是面向个人域名的只收邮件应用，基于 [ayingQAQ/cloud
 ## 收信逻辑
 
 ```mermaid
-flowchart LR
-    A[外部发件方] --> B[Cloudflare Email Routing]
-    B --> C[入站 Email Worker<br/>精确地址准入]
-    C -->|先持久化原始邮件| R[(私有 R2：raw EML)]
-    R -->|R2 对象通知| Q[Cloudflare Queue]
-    C -.->|仅发送唤醒信号| V[VPS 队列拉取器]
-    Q -->|拉取任务| V
-    V --> P[解析 MIME、正文和附件]
-    P --> D[(私有 R2：正文和附件)]
-    P -->|受状态约束的发布| S[(D1：索引和处理状态)]
-    S --> U[收件箱实时更新]
-    S --> T[可选 Telegram 通知]
-    V -.->|失败重试或死信记录| Q
-    R -.->|启用恢复后核对遗漏任务| Q
+flowchart TB
+    A[外部邮件] --> B[Email Routing]
+    B --> C[入站 Worker：校验地址]
+    C --> R[(R2：保存原始邮件)]
+    R --> Q[Queue：投递解析任务]
+    Q --> V[VPS：拉取并解析]
+    V --> D[(R2：保存正文和附件)]
+    D --> S[(D1：发布邮件索引)]
+    S --> U[收件箱更新]
+    S --> T[可选 Telegram 推送]
 ```
 
 1. **地址准入**：入站入口只接受已创建且允许收信的明确地址；未知地址直接拒绝。邮件大小也在入口校验。
@@ -45,19 +41,16 @@ flowchart LR
 ## 登录、读取与安全边界
 
 ```mermaid
-flowchart LR
-    W[浏览器或 Android WebView] --> E[Cloudflare 页面/API 入口]
-    E -->|静态资源| F[Vue 界面]
-    E -->|受保护的 API 请求| X[VPS 私有入口 / Hono]
-    L[邮局密码] --> A[应用会话]
-    O[Cloudflare Access 一次性验证码回调] --> A
-    A --> X
-    X --> H[会话、用户与邮箱归属校验]
-    H --> I[(D1 索引)]
-    H --> J[(私有 R2 原件、正文、附件)]
-    I --> X
-    J --> X
-    X --> W
+flowchart TB
+    W[浏览器 / Android WebView] --> L[邮局密码或 Access 验证码]
+    L --> A[建立应用会话]
+    A --> E[Cloudflare 页面与 API 入口]
+    E --> X[VPS 私有入口：Hono]
+    X --> H[校验会话和邮箱归属]
+    H --> I[(D1：邮件索引)]
+    H --> J[(私有 R2：邮件内容)]
+    I --> K[返回已授权的邮件]
+    J --> K
 ```
 
 登录支持独立邮局密码；配置对应模式后，也可通过 Cloudflare Access 的一次性验证码回调建立应用会话。Access 负责验证码回调的身份验证，应用 API 仍检查会话和邮箱归属。页面入口到 VPS 的转发使用独立的源站凭据；正文、附件和原始 EML 不作为公共静态资源暴露。已删除、停用或不属于当前用户的邮箱和邮件不会因知道对象地址而直接可读。
