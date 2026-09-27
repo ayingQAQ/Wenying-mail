@@ -1,23 +1,100 @@
 # Wenying mail
 
-面向个人域名的只收邮件项目。基于 [ayingQAQ/cloud-mail](https://github.com/ayingQAQ/cloud-mail) 和原项目 [maillab/cloud-mail](https://github.com/maillab/cloud-mail) 改造，保留 Vue、Hono、Drizzle 与 Cloudflare 存储体系。
+Wenying mail 是面向个人域名的只收邮件应用，基于 [ayingQAQ/cloud-mail](https://github.com/ayingQAQ/cloud-mail) 与原项目 [maillab/cloud-mail](https://github.com/maillab/cloud-mail) 改造。它将**邮件接收、原件保存、异步解析、收件箱查询**分开处理：入站时先保存原始邮件，再由队列处理正文和附件。项目不提供邮件发送或公开注册。
 
-邮件进入时先将原始字节与投递信息保存到私有 R2，再异步解析并发布到收件箱。应用支持多个明确创建的收件地址、邮箱切换、搜索、已读与星标、回收站、验证码识别和复制、移动端页面，以及轻量 Android WebView 客户端。Telegram 机器人可按邮箱选择通知范围。邮件发送与公开注册已关闭。
+界面支持管理多个明确创建的收件地址、切换与排序邮箱、搜索、已读和星标、回收站、验证码识别与一键复制，以及移动端布局。Android 目录提供轻量 WebView 客户端。Telegram 机器人可选择要推送的邮箱，并提供 `/mailboxes` 和 `/test` 命令。
 
-## 架构
+## 组件与职责
 
-- Cloudflare Email Routing 接收入站邮件；独立入口负责精确地址准入和原件持久化。
-- 队列与 VPS 处理器执行解析、幂等发布、失败重试和通知；D1 存储索引，R2 存储原件、正文与附件。
-- Cloudflare Worker 提供页面入口；受保护的 API 使用应用会话。验证码登录可由 Cloudflare Access 保护回调，亦可使用独立邮局密码。
-- 私有正文、附件和原始 EML 仅通过经过授权的接口读取。
-- 加密备份与隔离恢复工具包含在 `ops/backup`。它们需要单独配置、演练和启用；本仓库不附带任何生产凭据或备份数据。
+| 组件 | 实现 | 职责 |
+| --- | --- | --- |
+| 网页界面 | `mail-vue`：Vue 3、Vite、Pinia、Element Plus | 收件箱、邮件详情、邮箱管理和设置；通过受保护的 API 读取数据 |
+| 入站入口 | `mail-worker/src/inbound`：Cloudflare Email Worker | 校验收件地址，把原始邮件与投递信息写入私有 R2；成功保存后才完成入站接收 |
+| 页面与 API 入口 | `mail-worker/src/index.js`：Cloudflare Worker、Hono | 提供页面资源、登录入口，并将 API 请求转发到 VPS 或本地处理 |
+| 后台处理 | `mail-worker/src/processing`、`src/vps`：队列、Node.js | 拉取待处理任务，解析 MIME、生成正文和附件、发布邮件索引、重试失败任务 |
+| 持久化 | Cloudflare D1、私有 R2 | D1 保存邮箱、邮件索引和处理状态；R2 保存原始 EML、正文及附件对象 |
+| 通知 | `mail-worker/src/service/telegram-notification.js`、`src/vps/telegram-bot.js` | 邮件发布后发送可选 Telegram 通知，按用户选择的邮箱过滤 |
+| 手机客户端 | `android` | 使用系统 WebView 加载网页应用 |
+| 备份工具 | `ops/backup` | 提供加密备份和隔离恢复工具，需另行配置、演练和启用 |
 
-## 本地构建
+## 收信逻辑
 
-需要 Node.js 24 和 pnpm 11。先进入 `mail-worker` 执行 `pnpm install --frozen-lockfile`，再执行 `pnpm build:vps`；前端在 `mail-vue` 目录执行 `pnpm install --frozen-lockfile` 和 `pnpm build`。Android 客户端源码位于 `android`，需自行配置 Android SDK 与发布签名。
+```mermaid
+flowchart LR
+    A[外部发件方] --> B[Cloudflare Email Routing]
+    B --> C[入站 Email Worker<br/>精确地址准入]
+    C -->|先持久化原始邮件| R[(私有 R2：raw EML)]
+    R -->|R2 对象通知| Q[Cloudflare Queue]
+    C -.->|仅发送唤醒信号| V[VPS 队列拉取器]
+    Q -->|拉取任务| V
+    V --> P[解析 MIME、正文和附件]
+    P --> D[(私有 R2：正文和附件)]
+    P -->|受状态约束的发布| S[(D1：索引和处理状态)]
+    S --> U[收件箱实时更新]
+    S --> T[可选 Telegram 通知]
+    V -.->|失败重试或死信记录| Q
+    R -.->|启用恢复后核对遗漏任务| Q
+```
 
-部署前必须创建自己的 Cloudflare 资源、域名、Access 策略、VPS 运行配置和最小权限凭据。不要直接复用示例配置中的域名或资源身份。实际生产环境还需要验证队列、收信故障行为、恢复与备份流程；代码和构建成功本身不代表这些能力已完成验收。
+1. **地址准入**：入站入口只接受已创建且允许收信的明确地址；未知地址直接拒绝。邮件大小也在入口校验。
+2. **先存原件**：原始字节和投递信息写入 R2 后才向上游确认接收。入站唤醒只是加速信号，邮件本身不经唤醒接口传输。
+3. **异步处理**：R2 对象通知进入队列，VPS 处理器拉取任务、解析 MIME，并把正文和附件写到私有 R2。D1 中的任务状态、租约和发布条件用于避免重复发布。
+4. **可见与通知**：索引成功发布到 D1 后，收件箱收到更新事件；Telegram 推送按用户选中的邮箱过滤，通知失败不会撤销已发布邮件。
+5. **故障处理**：失败任务按状态重试，异常事件可进入死信记录。原件与队列的核对恢复有独立开关，需在部署环境明确启用和验证；不能把它视作默认开启。
+
+## 登录、读取与安全边界
+
+```mermaid
+flowchart LR
+    W[浏览器或 Android WebView] --> E[Cloudflare 页面/API 入口]
+    E -->|静态资源| F[Vue 界面]
+    E -->|受保护的 API 请求| X[VPS 私有入口 / Hono]
+    L[邮局密码] --> A[应用会话]
+    O[Cloudflare Access 一次性验证码回调] --> A
+    A --> X
+    X --> H[会话、用户与邮箱归属校验]
+    H --> I[(D1 索引)]
+    H --> J[(私有 R2 原件、正文、附件)]
+    I --> X
+    J --> X
+    X --> W
+```
+
+登录支持独立邮局密码；配置对应模式后，也可通过 Cloudflare Access 的一次性验证码回调建立应用会话。Access 负责验证码回调的身份验证，应用 API 仍检查会话和邮箱归属。页面入口到 VPS 的转发使用独立的源站凭据；正文、附件和原始 EML 不作为公共静态资源暴露。已删除、停用或不属于当前用户的邮箱和邮件不会因知道对象地址而直接可读。
+
+删除、恢复、过期清理和物理清除分属不同状态与任务，避免把用户界面上的移除误当作对象已经从 R2 物理删除。恢复扫描、删除清理、物理清除和旧版本垃圾回收均由部署开关控制，需要分别验证后启用。
+
+## 代码入口
+
+```text
+mail-vue/                     Vue 页面、状态管理与前端构建
+mail-worker/src/index.js      网页/API Worker 入口与计划任务开关
+mail-worker/src/inbound/      收件地址校验、原件写入和即时唤醒
+mail-worker/src/processing/   队列处理、发布、重试和恢复
+mail-worker/src/service/      邮件读取、权限检查与通知
+mail-worker/src/security/     登录、会话和只收信限制
+mail-worker/src/vps/          VPS HTTP 服务、队列拉取与 Telegram Bot
+android/                      Android WebView 客户端
+ops/vps/                      VPS 服务与环境变量示例
+ops/backup/                   备份及隔离恢复工具
+```
+
+## 本地构建与部署准备
+
+需要 Node.js 24、pnpm 11。前端与 VPS 服务分别构建：
+
+```sh
+cd mail-vue
+pnpm install --frozen-lockfile
+pnpm build
+
+cd ../mail-worker
+pnpm install --frozen-lockfile
+pnpm build:vps
+```
+
+Android 客户端还需要 Android SDK；发布签名应自行保管。构建成功不等于生产部署完成。部署前需创建自己的 Cloudflare Email Routing、Worker、Queue、D1、R2、域名及所需 Access 策略，配置 VPS、入口凭据和最小权限访问，并验证实际收信、失败重试和恢复行为。示例配置不能直接当作生产凭据使用。备份工具不会因部署应用而自动启用，本仓库不附带生产密钥或备份数据。
 
 ## 来源与许可
 
-此仓库保留上游 Git 历史，遵循原项目的 [MIT License](LICENSE)。感谢上游维护者。
+本项目基于上述上游源码改造，保留原项目的 [MIT License](LICENSE) 并注明来源。此公开仓库以独立历史发布。
