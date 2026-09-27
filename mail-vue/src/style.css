@@ -1,0 +1,250 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    scrollbar-width: thin;
+    scrollbar-color: var(--dark-border) transparent;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+}
+
+#app {
+    width: 100%;
+    height: 100%;
+}
+
+:deep(.el-input__inner:focus) {
+    background-color: transparent !important;
+    border-color: #dcdfe6 !important;
+}
+
+.el-table thead th {
+    font-weight: bold !important;
+}
+
+body {
+    font-family: Inter, "Helvetica Neue", Helvetica, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "微软雅黑", Arial, sans-serif;
+    line-height: 1.5;
+    color: var(--el-text-color-primary);
+    font-size: 14px;
+}
+
+html, body {
+    background: var(--el-bg-color);
+}
+
+ul, ol {
+    list-style: none;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
+
+button, input, select, textarea {
+    font-family: inherit;
+    font-size: inherit;
+    outline: none;
+    border: none;
+    background: none;
+}
+
+*:focus {
+    outline: none;
+}
+
+.el-message {
+    white-space: nowrap !important;
+}
+
+.message-bottom {
+    top: auto !important;
+    bottom: 20px !important;
+
+    .el-icon {
+        display: none !important;
+    }
+}
+
+.el-input-group__append, .el-input-group__prepend {
+    color: var(--el-text-color-primary) !important;
+}
+
+.tox .tox-dialog__iframe.tox-dialog__iframe--opaque {
+    background-color: var(--el-bg-color) !important;
+}
+
+.tox .tox-dialog--width-lg {
+    height: 850px !important;
+    @media (max-width: 1024px) {
+        height: calc(100% - 40px) !important;
+    }
+}
+
+.tox .tox-dialog__body-content {
+    overflow: initial !important;
+    max-height: min(850px, calc(100vh - 110px)) !important;
+    @media (max-width: 1024px) {
+        box-sizing: initial !important;
+        max-height: min(850px, calc(100% - 40px)) !important;
+    }
+}
+
+.tox-dialog__body-content {
+    height: auto !important;
+    flex-basis: auto !important;
+}
+
+.tox .tox-collection--grid .tox-collection__group {
+    max-height: 220px !important;
+}
+
+:root {
+    --el-color-primary: #1890ff;
+    --el-color-primary-dark-2: #1064c0;
+    --el-color-primary-light-3: #4dabff;
+    --el-color-primary-light-5: #69c0ff;
+    --el-color-primary-light-7: #91d5ff;
+    --el-color-primary-light-9: #e6f7ff;
+
+    --extra-light-fill: #FAFCFF;
+    --settings-page-background: #fafbfc;
+    --light-ill: #F5F7FA;
+    --light-border: #E4E7ED;
+    --header-actions-border: inset 0 -1px 0 0 var(--el-border-color-lighter);
+    --aside-backgound: #191A23;
+    --aside-menu-active-background: #27282D;
+    --loadding-background: rgba(255, 255, 255, 0.8);
+    --dark-border: #CDD0D6;
+    --base-fill: #F0F2F5;
+    --regular-text-color: #585d69;
+    --light-border-color: #e7e9ec;
+    --aside-right-border: 3px 0 5px rgba(0, 21, 41, .35);
+    --choose-account-background: var(--el-color-primary-light-8);
+    --el-text-color-regular: var(--el-text-color-primary);
+    --email-scroll-content-color: rgba(25, 41, 59, 0.4);
+    --email-hover-background: #F2F6FC;
+    --email-right-click-background: #FDF6EC;
+    --login-border: none;
+    --form-desc-color: #71717a;
+    --login-switch-color: #006be6;
+    --scrollbar-track-color: #A8ABB2;
+    --base-border-color: #DCDFE6;
+    --secondary-text-color: #909399;
+    --message-block-color: rgba(0, 0, 0, 0);
+    --loading-hide-transition: all 200ms;
+    --vt-x: 50%;
+    --vt-y: 50%;
+    --vt-duration: 520ms;
+    --vt-easing: ease-out;
+}
+
+.dark {
+    --extra-light-fill: #191919;
+    --settings-page-background: var(--extra-light-fill);
+    --light-ill: #262727;
+    --light-border: #414243;
+    --aside-backgound: #141414;
+    --aside-menu-active-background: rgba(255, 255, 255, 0.08);
+    --header-actions-border: inset 0 -1px 0 0 var(--el-border-color-lighter);
+    --loadding-background: rgba(0, 0, 0, 0.3);
+    --dark-border: #636466;
+    --base-fill: #303030;
+    --regular-text-color: #bfbdbc;
+    --light-border-color: #414243;
+    --aside-right-border: 3px 0 5px #0A0A0A;
+    --choose-account-background: #39393A;
+    --email-scroll-content-color: rgba(255, 255, 255, 0.3);
+    --email-hover-background: #1D1E1F;
+    --email-right-click-background: var(--email-hover-background);
+    --login-border: none;
+    --form-desc-color: #8D9095;
+    --login-switch-color: rgb(102, 177, 255);
+    --scrollbar-track-color: #8D9095;
+    --base-border-color: #4C4D4F;
+    --secondary-text-color: #A3A6AD;
+    --message-block-color: rgba(30, 30, 30, 0.2);
+    --el-border-color: #414243 !important;
+}
+
+.el-input {
+    --el-input-text-color: var(--el-text-color-primary) !important;
+}
+
+/* 视图过渡，基于径向剪裁 */
+html.dark,
+html:not(.dark) {
+    view-transition-name: root;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+}
+
+/* 层级控制，确保对应方向动画在上层可见 */
+html[data-theme-to="dark"]::view-transition-new(root) { z-index: 2; }
+html[data-theme-to="dark"]::view-transition-old(root) { z-index: 1; }
+html[data-theme-to="light"]::view-transition-old(root) { z-index: 2; }
+html[data-theme-to="light"]::view-transition-new(root) { z-index: 1; }
+
+/* 切到暗色：新视图从点击点向外扩散 */
+html[data-theme-to="dark"]::view-transition-new(root) {
+    clip-path: circle(0px at var(--vt-x) var(--vt-y));
+    animation: vt-radial-in var(--vt-duration) var(--vt-easing) forwards;
+}
+
+/* 切到浅色：旧视图向点击点收缩 */
+html[data-theme-to="light"]::view-transition-old(root) {
+    clip-path: circle(var(--vt-end-radius, 0px) at var(--vt-x) var(--vt-y));
+    animation: vt-radial-out var(--vt-duration) var(--vt-easing) forwards;
+}
+
+@keyframes vt-radial-in {
+    from { clip-path: circle(0px at var(--vt-x) var(--vt-y)); }
+    to   { clip-path: circle(var(--vt-end-radius, 0px) at var(--vt-x) var(--vt-y)); }
+}
+
+@keyframes vt-radial-out {
+    from { clip-path: circle(var(--vt-end-radius, 0px) at var(--vt-x) var(--vt-y)); }
+    to   { clip-path: circle(0px at var(--vt-x) var(--vt-y)); }
+}
+
+.startup-error {
+    min-height: 100vh;
+    box-sizing: border-box;
+    display: grid;
+    place-content: center;
+    gap: 16px;
+    padding: 24px;
+    text-align: center;
+}
+.startup-error h1 { margin: 0; font-size: 22px; }
+.startup-error p { margin: 0; }
+.startup-error button {
+    justify-self: center;
+    padding: 10px 24px;
+    border: 1px solid #2563eb;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font: inherit;
+}
+.startup-error button:focus-visible { outline: 3px solid #93c5fd; outline-offset: 3px; }
+
+/* The approved private-mail interface: quiet surfaces and clear content hierarchy. */
+:root{--mail-side:#fafafa;--mail-soft:#f5f5f6;--mail-selected:#eaeaec;--el-color-primary:#26272b;--el-color-primary-dark-2:#101114;--el-color-primary-light-3:#62636a;--el-color-primary-light-5:#929399;--el-color-primary-light-7:#c7c7cc;--el-color-primary-light-9:#f3f3f5;--el-border-color:#e5e5e9;--el-border-color-lighter:#ededf0;--el-text-color-primary:#202124;--el-text-color-regular:#62636a;--el-text-color-secondary:#82838b;--aside-backgound:#fafafa;--aside-right-border:none;--el-border-radius-base:7px}
+html.dark{--mail-side:#161719;--mail-soft:#252629;--mail-selected:#303136;--el-color-primary:#c3c7ce;--el-color-primary-dark-2:#e2e4e8;--el-color-primary-light-3:#9a9ca3;--el-color-primary-light-5:#6d6e75;--el-color-primary-light-7:#42434a;--el-color-primary-light-9:#28292e;--el-bg-color:#191a1c;--el-text-color-primary:#e8e8eb;--el-text-color-regular:#b5b6bc;--el-text-color-secondary:#999aa2;--el-border-color:#303136;--el-border-color-lighter:#292a2e;--aside-backgound:#161719}
+body{font-family:'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif;font-size:13px;-webkit-font-smoothing:antialiased}button:disabled{cursor:default}.mail-icon-button{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:6px;color:var(--el-text-color-regular);cursor:pointer;flex-shrink:0}.mail-icon-button svg{width:17px;height:17px}.mail-icon-button:hover{background:var(--mail-soft)}.main-container{min-width:0}.main-container>.el-main{height:100%;min-width:0;overflow:hidden}.mail-reading-pane .box{height:100%}.mail-reading-pane .container{padding:28px 34px!important}.mail-reading-pane .header-actions{height:51px;padding:8px 24px;box-shadow:none;border-bottom:1px solid var(--el-border-color-lighter)}.mail-reading-pane .email-title{font-size:22px!important;font-weight:600!important;line-height:1.5}.mail-reading-pane .email-info{font-size:12px}.mail-reading-pane .body-actions{font-size:11px;display:flex;gap:12px;margin:10px 0 16px}.body-actions button,.body-actions a{color:var(--el-text-color-regular);cursor:pointer;border:1px solid var(--el-border-color);border-radius:5px;padding:5px 9px;text-decoration:none}.mail-reading-pane .email-text{white-space:pre-wrap;overflow-wrap:anywhere;font-size:13px;line-height:1.9;padding:22px;border-radius:7px;background:var(--mail-soft)}.mail-reading-pane .att-item{border:1px solid var(--el-border-color);border-radius:8px}.operations{background:var(--mail-side);padding:30px!important}.operations>header{margin-bottom:24px}.operations>header p{font-size:12px;color:var(--el-text-color-secondary);margin-top:8px}.operations .el-tab-pane>p{font-size:12px;color:var(--el-text-color-secondary);margin:15px 0}.operations .el-table{border:1px solid var(--el-border-color);border-radius:8px}.operations .el-table th.el-table__cell{background:var(--mail-side)}.operations .el-table td.el-table__cell{padding:15px 0;font-size:12px}.mail-create-panel{border:1px solid var(--el-border-color);border-radius:9px;background:var(--el-bg-color);padding:25px;margin:20px 0 24px}.mail-create-panel h2{font-size:17px!important;margin:0 0 20px!important}.mail-create-fields{display:grid;grid-template-columns:minmax(0,1fr) 180px 90px;gap:16px}.mail-create-fields .el-input,.mail-create-fields .el-select,.mail-create-fields .el-button{height:44px;width:100%}.mail-create-fields .el-select__wrapper{min-height:44px}.mail-create-panel p{font-size:11px;color:var(--el-text-color-secondary);margin-top:10px}.el-button--primary{--el-button-text-color:#fff}.dark .el-button--primary{--el-button-text-color:#191a1c}.el-message{max-width:calc(100vw - 24px);white-space:normal!important}
+@media(max-width:700px){.mail-reading-pane .container{padding:22px!important}.operations{padding:20px 15px!important}.mail-create-panel{padding:20px 16px}.mail-create-fields{grid-template-columns:minmax(0,1fr) 80px;gap:10px}.mail-create-fields>.el-input{grid-column:1/-1}.operations>header h1{font-size:21px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+.mail-reading-pane .att{max-width:100%}.mail-reading-pane .att-box{min-width:0!important;width:100%}.mail-reading-pane .att-item{min-width:0}.mail-reading-pane .scrollbar{height:calc(100% - 51px)}

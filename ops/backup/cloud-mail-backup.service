@@ -1,0 +1,19 @@
+[Unit]
+Description=Cloud Mail encrypted offsite backup
+After=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=%h/cloud-mail-backup/current
+EnvironmentFile=%h/cloud-mail-backup/credentials.env
+ExecStart=/usr/bin/node ops/backup/run-daily.mjs --config %h/cloud-mail-backup/backup.json --offsite-config %h/cloud-mail-backup/offsite.json --job-root %h/cloud-mail-backup/jobs
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+MemoryHigh=512M
+MemoryMax=768M
+CPUQuota=100%
+TimeoutStartSec=24h
+TimeoutStopSec=60s
+# Exit 3 means a required receipt is pending and remains a failed unit.
+# Do not add SuccessExitStatus=3 or restart a partial export automatically.

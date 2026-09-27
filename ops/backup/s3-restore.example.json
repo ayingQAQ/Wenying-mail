@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "purpose": "restore-plaintext-attachments",
+  "environment": "staging",
+  "snapshotId": "REPLACE_WITH_VERIFIED_SNAPSHOT_UUID",
+  "target": {
+    "endpoint": "https://restore.invalid",
+    "bucket": "replace-with-private-empty-restore-bucket",
+    "region": "auto",
+    "forcePathStyle": true
+  },
+  "maxRunMs": 14400000,
+  "credentialEnv": {
+    "accessKeyId": "MAIL_RESTORE_S3_ACCESS_KEY_ID",
+    "secretAccessKey": "MAIL_RESTORE_S3_SECRET_ACCESS_KEY"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "purpose": "restore-isolated-cloud",
+  "environment": "staging",
+  "snapshotId": "11111111-1111-4111-8111-111111111111",
+  "accountId": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "d1": {
+    "sourceDatabaseId": "22222222-2222-4222-8222-222222222222",
+    "databaseId": "33333333-3333-4333-8333-333333333333",
+    "databaseName": "cloud-mail-isolated-restore",
+    "uploadOrigins": ["https://bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.r2.cloudflarestorage.com"]
+  },
+  "r2": {"sourceBucket": "mail-source", "bucket": "mail-isolated-restore", "metadataNames": {}},
+  "kv": {"sourceNamespaceId": "cccccccccccccccccccccccccccccccc"},
+  "maxRunMs": 14400000,
+  "credentialEnv": {
+    "apiToken": "MAIL_RESTORE_CF_TOKEN",
+    "r2AccessKeyId": "MAIL_RESTORE_R2_ID",
+    "r2SecretAccessKey": "MAIL_RESTORE_R2_SECRET"
+  }
+}

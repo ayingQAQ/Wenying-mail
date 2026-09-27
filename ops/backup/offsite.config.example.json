@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "environment": "staging",
+  "target": {
+    "endpoint": "REPLACE_WITH_VERIFIED_HTTPS_ORIGIN",
+    "bucket": "REPLACE_WITH_PRIVATE_OFFSITE_BUCKET",
+    "region": "REPLACE_WITH_REGION",
+    "forcePathStyle": true
+  },
+  "maxRunMs": 14400000,
+  "credentialEnv": {
+    "accessKeyId": "MAIL_OFFSITE_ACCESS_KEY_ID",
+    "secretAccessKey": "MAIL_OFFSITE_SECRET_ACCESS_KEY"
+  }
+}

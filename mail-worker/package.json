@@ -1,0 +1,48 @@
+{
+  "name": "mail-worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:vps": "node scripts/build-vps.mjs",
+    "start:vps": "node dist-vps/server.mjs",
+    "test:vps": "node scripts/build-vps.mjs && node --test test-node/vps*.test.js",
+    "dev:browser-fixture": "node scripts/browser-harness.js --local-fixture",
+    "db:migrate:local": "node scripts/migrate.js --local",
+    "db:bootstrap:local": "node scripts/bootstrap-admin.js --local",
+    "test:tooling": "node scripts/build-vps.mjs && node --test test-node/*.test.js",
+    "dev": "wrangler dev --config wrangler-dev.toml",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check:bundle": "wrangler deploy --dry-run --config wrangler-check.jsonc --outdir .wrangler/bundle",
+    "check:inbound": "wrangler deploy --dry-run --config wrangler-inbound-check.jsonc --outdir .wrangler/inbound-bundle",
+    "benchmark:kdf": "node scripts/benchmark-kdf.mjs",
+    "deploy:test-env": "wrangler deploy --config wrangler-test.toml",
+    "deploy": "wrangler deploy",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "@cloudflare/vitest-plugin": "1.2.7",
+    "@msw/cloudflare": "0.1.0",
+    "miniflare": "5.20260923.0-alpha",
+    "msw": "2.15.0",
+    "vitest": "4.1.11",
+    "wrangler": "^4.90.0"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.882.0",
+    "@cloudflare/vite-plugin": "1.6.0",
+    "@noble/hashes": "2.4.0",
+    "dayjs": "^1.11.18",
+    "drizzle-orm": "^0.42.0",
+    "hono": "4.12.16",
+    "i18next": "^25.4.2",
+    "jose": "6.2.12",
+    "linkedom": "^0.18.12",
+    "postal-mime": "^2.4.4",
+    "resend": "^6.4.1",
+    "sanitize-html": "2.17.7",
+    "ua-parser-js": "^2.0.4",
+    "uuid": "^11.1.0"
+  }
+}

@@ -1,0 +1,148 @@
+/* UI Handbook-inspired tokens, adapted for a quiet, content-first mailbox. */
+:root {
+  --mail-accent: #5275a3;
+  --mail-focus: #648bbb;
+  --mail-focus-halo: #648bbb24;
+  --mail-control-border: #dce2e9;
+  --mail-hover-border: #bac8d8;
+  --mail-radius-control: 8px;
+  --mail-radius-panel: 12px;
+  --mail-radius-dialog: 16px;
+  --mail-ease: cubic-bezier(.2,.8,.2,1);
+  --mail-fast: 150ms;
+  --mail-enter: 220ms;
+  --mail-leave: 160ms;
+  --mail-shadow: 0 3px 8px #25364a05, 0 12px 32px #25364a0d;
+  --mail-side: #f8f9fb;
+  --mail-soft: #f2f5f8;
+  --mail-selected: #e9eef4;
+  --el-color-primary: var(--mail-accent);
+  --el-color-primary-dark-2: #41618b;
+  --el-color-primary-light-3: #7e98b9;
+  --el-color-primary-light-5: #a9bbd1;
+  --el-color-primary-light-7: #d1dce9;
+  --el-color-primary-light-8: #e2eaf3;
+  --el-color-primary-light-9: #f0f4f9;
+  --el-border-color: var(--mail-control-border);
+  --el-border-color-light: #e6eaf0;
+  --el-border-color-lighter: #edf0f4;
+  --el-border-color-hover: var(--mail-hover-border);
+  --el-text-color-secondary: #707b89;
+  --el-border-radius-base: var(--mail-radius-control);
+  --el-box-shadow-light: var(--mail-shadow);
+  --el-transition-duration: var(--mail-enter);
+  --el-transition-duration-fast: var(--mail-fast);
+  --vt-duration: 320ms;
+}
+html.dark {
+  --mail-accent: #9ab9df;
+  --mail-focus: #a7c8ed;
+  --mail-focus-halo: #a7c8ed24;
+  --mail-control-border: #3e4958;
+  --mail-hover-border: #61748c;
+  --mail-side: #1c2027;
+  --mail-soft: #282f39;
+  --mail-selected: #323d4c;
+  --mail-shadow: 0 8px 28px #0d162329;
+  --el-color-primary: var(--mail-accent);
+  --el-color-primary-dark-2: #b7cfeb;
+  --el-color-primary-light-3: #839dbc;
+  --el-color-primary-light-5: #617893;
+  --el-color-primary-light-7: #41536b;
+  --el-color-primary-light-8: #35455a;
+  --el-color-primary-light-9: #2c3849;
+  --el-border-color: var(--mail-control-border) !important;
+  --el-border-color-light: #35404e;
+  --el-border-color-lighter: #303947;
+  --el-text-color-secondary: #a5b0bf;
+  --el-bg-color-overlay: #252c36;
+  --el-bg-color: #20252d;
+  --el-bg-color-page: #1c2027;
+  --el-fill-color-blank: #20252d;
+  --el-fill-color: #303a47;
+  --el-fill-color-light: #293340;
+  --el-fill-color-lighter: #252e39;
+}
+
+/* One soft, visible keyboard cue. Inputs delegate it to their wrapper. */
+:is(button,a,select,textarea,input,[tabindex]):focus-visible {
+  outline: 2px solid var(--mail-focus) !important;
+  outline-offset: 3px;
+}
+:is(.el-input__inner,.el-select__input,.el-select__wrapper,.el-popper,.el-dialog,.el-message-box):focus-visible,
+.mail-search input:focus-visible {
+  outline: none !important;
+}
+.el-input,.el-select,.el-textarea {
+  --el-input-border-color: var(--mail-control-border);
+  --el-input-hover-border-color: var(--mail-hover-border);
+  --el-input-focus-border-color: var(--mail-focus);
+  --el-select-border-color-hover: var(--mail-hover-border);
+  --el-select-input-focus-border-color: var(--mail-focus);
+}
+.el-input__wrapper,.el-select__wrapper,.el-textarea__inner {
+  border-radius: var(--mail-radius-control);
+  transition: box-shadow var(--mail-fast) var(--mail-ease), background-color var(--mail-fast) ease;
+}
+.el-input__wrapper.is-focus,.el-select__wrapper.is-focused {
+  box-shadow: 0 0 0 1px var(--mail-focus) inset, 0 0 0 3px var(--mail-focus-halo) !important;
+}
+.mail-workspace .mail-search:focus-within {
+  border-color: var(--mail-focus);
+  box-shadow: 0 0 0 3px var(--mail-focus-halo);
+}
+.el-textarea__inner:focus-visible { outline: none !important; }
+.el-textarea__inner:focus { box-shadow: 0 0 0 1px var(--mail-focus) inset, 0 0 0 3px var(--mail-focus-halo); }
+
+:is(.mail-icon-button,.mailbox-trigger,.mailbox-copy,.mailbox-choice,.mailbox-pin,.mail-user-button,.el-button,.body-actions button,.body-actions a,.verification-chip,.verification-banner button),
+.mail-sidebar nav button,.mail-filters button,.login-tabs button {
+  transition: background-color var(--mail-fast) ease, color var(--mail-fast) ease, border-color var(--mail-fast) ease, box-shadow var(--mail-fast) ease, transform var(--mail-fast) var(--mail-ease);
+}
+:is(.el-button,.mail-icon-button,.mailbox-copy,.verification-chip):active:not(:disabled) { transform: scale(.97); }
+.el-button--primary { --el-button-border-color: transparent; --el-button-hover-border-color: transparent; --el-button-active-border-color: transparent; }
+.el-button:not(.is-disabled):hover { box-shadow: 0 2px 6px #25364a0b; }
+.mailbox-trigger:hover,.mailbox-copy:not(:disabled):hover { background: var(--mail-soft); border-color: var(--mail-hover-border); }
+.mailbox-trigger svg:last-child { transition: transform var(--mail-enter) var(--mail-ease); }
+.mailbox-trigger[aria-expanded=true] svg:last-child { transform: rotate(180deg); }
+.mailbox-option,.mailbox-choice,.mailbox-pin { border-radius: var(--mail-radius-control); }
+.mailbox-options { overscroll-behavior: contain; scrollbar-gutter: stable; }
+.mailbox-options .mailbox-option { margin-top: 3px; transition: background-color var(--mail-fast) ease; }
+.mail-sidebar nav button.active { box-shadow: none; }
+.mail-sidebar nav button:hover svg { color: var(--mail-accent); }
+
+.el-popper.is-light,.el-dropdown__popper,.el-select__popper {
+  border-color: var(--mail-control-border);
+  border-radius: var(--mail-radius-panel);
+  box-shadow: var(--mail-shadow);
+}
+.el-dropdown-menu { padding: 6px; border-radius: var(--mail-radius-panel); }
+.el-dropdown-menu__item,.el-select-dropdown__item { border-radius: 6px; transition: background-color var(--mail-fast) ease; }
+.el-select-dropdown__item { margin: 2px 6px; }
+.el-dialog,.el-message-box { border: 1px solid var(--mail-control-border); border-radius: var(--mail-radius-dialog); box-shadow: var(--mail-shadow); }
+.el-message { border-radius: var(--mail-radius-panel); box-shadow: var(--mail-shadow); }
+.el-tabs__active-bar { border-radius: 2px; transition: transform var(--mail-enter) var(--mail-ease); }
+.el-table { --el-table-row-hover-bg-color: var(--mail-soft); }
+.el-table__body td.el-table__cell { transition: background-color var(--mail-fast) ease; }
+.mail-create-panel,.operations .el-table { border-radius: var(--mail-radius-panel); }
+.mail-create-panel { box-shadow: 0 2px 8px #25364a03; }
+.verification-banner { border-radius: var(--mail-radius-panel); }
+.mail-item time,.verification-chip strong { font-variant-numeric: tabular-nums; }
+
+/* Reader enters once; rows do not reanimate when background polling adds mail. */
+.mail-reading-pane > .box { animation: mail-reveal var(--mail-enter) var(--mail-ease); }
+@keyframes mail-reveal { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+.mail-skeleton-row { padding: 24px 20px; border-top: 1px solid var(--el-border-color-lighter); }
+.mail-skeleton-row span { display: block; height: 12px; margin-bottom: 12px; border-radius: 6px; background: var(--mail-soft); animation: mail-pulse 1.4s ease-in-out infinite alternate; }
+.mail-skeleton-row span:first-child { width: 36%; }
+.mail-skeleton-row span:nth-child(2) { width: 72%; }
+.mail-skeleton-row span:last-child { width: 90%; margin-bottom: 0; }
+@keyframes mail-pulse { to { opacity: .4; } }
+
+@media(pointer:coarse) {
+  .mail-icon-button,.mail-row-actions .mail-icon-button,.mailbox-copy,.mailbox-pin,.mail-user-button { min-width:44px; min-height:44px; }
+  .mailbox-trigger,.mailbox-choice,.mail-sidebar nav button,.el-dropdown-menu__item { min-height:44px; }
+  .mailbox-picker { gap:8px; }
+}
+@media(prefers-reduced-motion:reduce) {
+  *,*::before,*::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; }
+}

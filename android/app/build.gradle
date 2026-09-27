@@ -1,0 +1,14 @@
+plugins { id 'com.android.application' }
+def signingFile = rootProject.file('.local/signing.properties')
+def signing = new Properties()
+if (signingFile.exists()) signingFile.withInputStream { signing.load(it) }
+android {
+ namespace 'com.pwbing.wengyingmail'
+ compileSdk 36
+ defaultConfig { applicationId 'com.pwbing.wengyingmail'; minSdk 26; targetSdk 36; versionCode 1; versionName '1.0.0' }
+ signingConfigs { personal { if (signingFile.exists()) { storeFile rootProject.file('.local/wengying-mail.jks'); storePassword signing.getProperty('storePassword'); keyAlias 'wengying-mail'; keyPassword signing.getProperty('storePassword') } } }
+ buildTypes { release { minifyEnabled true; shrinkResources true; signingConfig signingConfigs.personal; proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro' } }
+ compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
+ lint { abortOnError true; checkReleaseBuilds true }
+}
+dependencies { testImplementation 'junit:junit:4.13.2' }

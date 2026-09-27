@@ -1,0 +1,12 @@
+<resources>
+ <string name="app_name">Wengying Mail</string>
+ <color name="window_background">#FFFFFF</color>
+ <color name="text_primary">#242527</color>
+ <color name="icon_background">#242527</color>
+ <style name="BaseAppTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+  <item name="android:fontFamily">sans</item><item name="android:colorAccent">#4778B2</item>
+  <item name="android:windowLightStatusBar">true</item>
+  <item name="android:windowBackground">@color/window_background</item><item name="android:windowActionModeOverlay">true</item>
+ </style>
+<style name="AppTheme" parent="BaseAppTheme"/>
+</resources>

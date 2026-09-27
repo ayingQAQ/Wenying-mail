@@ -1,0 +1,11 @@
+import app from '../hono/hono';
+import result from '../model/result';
+import {processingList,retryProcessing,mailboxList,setMailbox,domainChange,operationsStatus,adminOnly,isAdmin} from '../service/mail-operations.js';
+app.get('/mailOperations/capabilities',c=>c.json(result.ok({admin:isAdmin(c)})));
+app.get('/mailOperations/jobs',async c=>c.json(result.ok(await processingList(c))));
+app.post('/mailOperations/jobs/:id/retry',async c=>c.json(result.ok(await retryProcessing(c,c.req.param('id'),await c.req.json())),202));
+app.get('/mailOperations/mailboxes',async c=>c.json(result.ok(await mailboxList(c))));
+app.post('/mailOperations/mailboxes/:id',async c=>c.json(result.ok(await setMailbox(c,c.req.param('id'),await c.req.json()))));
+app.get('/mailOperations/domains',async c=>{adminOnly(c);return c.json(result.ok((await c.env.db.prepare('SELECT domain_id AS domainId,name,enabled FROM domains ORDER BY name LIMIT 100').all()).results));});
+app.post('/mailOperations/domains',async c=>{await domainChange(c,await c.req.json());return c.json(result.ok());});
+app.get('/mailOperations/status',async c=>c.json(result.ok(await operationsStatus(c))));

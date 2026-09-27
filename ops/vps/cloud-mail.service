@@ -1,0 +1,21 @@
+[Unit]
+Description=Cloud Mail private API
+After=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h/cloud-mail/current
+ExecStart=/usr/bin/node --max-old-space-size=384 --env-file=%h/cloud-mail/runtime.env server.mjs
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=35
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+MemoryHigh=512M
+MemoryMax=768M
+TasksMax=64
+CPUQuota=100%
+
+[Install]
+WantedBy=default.target

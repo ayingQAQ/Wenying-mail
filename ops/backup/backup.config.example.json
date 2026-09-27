@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "environment": "staging",
+  "accountId": "REPLACE_WITH_ACCOUNT_ID",
+  "databaseId": "REPLACE_WITH_D1_DATABASE_ID",
+  "bucket": "REPLACE_WITH_PRIVATE_BUCKET",
+  "holdOrigin": "https://REPLACE_WITH_STAGING_MAIL_ORIGIN",
+  "downloadOrigins": ["https://REPLACE_WITH_VERIFIED_D1_EXPORT_DOWNLOAD_ORIGIN"],
+  "recipient": "REPLACE_WITH_AGE_PUBLIC_KEY",
+  "executable": "age",
+  "destination": "./encrypted-backups",
+  "maxRunMs": 1800000,
+  "schemaVersion": 13,
+  "appCommit": "REPLACE_WITH_DEPLOYED_APP_COMMIT",
+  "appSourceSha256": "REPLACE_WITH_DEPLOYED_SOURCE_HASH",
+  "credentialEnv": {
+    "r2AccessKeyId": "MAIL_BACKUP_R2_ACCESS_KEY_ID",
+    "r2SecretAccessKey": "MAIL_BACKUP_R2_SECRET_ACCESS_KEY",
+    "d1Token": "MAIL_BACKUP_D1_TOKEN",
+    "accessClientId": "MAIL_BACKUP_ACCESS_CLIENT_ID",
+    "accessClientSecret": "MAIL_BACKUP_ACCESS_CLIENT_SECRET"
+  },
+  "metadataNames": {}
+}
