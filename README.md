@@ -4,6 +4,26 @@ Wenying mail 是面向个人域名的只收邮件应用，基于 [ayingQAQ/cloud
 
 界面支持管理多个明确创建的收件地址、切换与排序邮箱、搜索、已读和星标、回收站、验证码识别与一键复制，以及移动端布局。Android 目录提供轻量 WebView 客户端。Telegram 机器人可选择要推送的邮箱，并提供 `/mailboxes` 和 `/test` 命令。
 
+## 界面预览
+
+以下画面使用本地生成的虚构邮箱和邮件，不含真实收件内容。点击图片可查看原图。
+
+**收件箱**：同时展示验证码、订单、订阅、普通来信、安全提醒和附件邮件。
+
+[![多类型邮件收件箱](assets/screenshots/inbox.jpg)](assets/screenshots/inbox.jpg)
+
+**验证码邮件**：在列表和正文中直接显示复制入口。
+
+[![验证码邮件与一键复制](assets/screenshots/verification.jpg)](assets/screenshots/verification.jpg)
+
+**邮箱与域名**：创建收件地址并管理各邮箱的收信状态。
+
+[![邮箱与域名管理](assets/screenshots/mailboxes.jpg)](assets/screenshots/mailboxes.jpg)
+
+**数据统计**：查看当前账号的收件、未读和原件用量。
+
+[![邮件数据统计](assets/screenshots/statistics.jpg)](assets/screenshots/statistics.jpg)
+
 ## 组件与职责
 
 | 组件 | 实现 | 职责 |
