@@ -23,11 +23,11 @@
             <div class="body-actions">
               <button @click="bodyFormat = bodyFormat === 'html' ? 'text' : 'html'">{{ bodyFormat === 'html' ? (english ? 'Plain text' : '纯文本') : 'HTML' }}</button>
               <a v-if="email.rawAvailable" :href="`/api/email/${email.emailId}/raw`" download>.eml</a>
-              <span v-if="loading">{{ english ? 'Loading…' : '正在加载…' }}</span>
+              <span v-if="loading" role="status">{{ english ? 'Loading…' : '正在加载…' }}</span>
               <button v-if="bodyError" @click="loadContent({force:true})">{{ english ? 'Retry loading message' : '重新加载邮件' }}</button>
             </div>
             <ShadowHtml :key="email.emailId" class="shadow-html" :html="bodyContent" :images="bodyImages" v-if="bodyFormat === 'html' && bodyContent" />
-            <pre v-else class="email-text" >{{bodyContent}}</pre>
+            <pre v-else-if="bodyFormat === 'text' && bodyContent" class="email-text">{{bodyContent}}</pre>
           </el-scrollbar>
           <div class="att" v-if="email.attList?.length > 0">
             <div class="att-title">
