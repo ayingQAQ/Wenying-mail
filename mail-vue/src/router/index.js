@@ -17,6 +17,7 @@ const routes = [
             {path:'/all-mail',name:'all-email',component:()=>import('@/views/all-email/index.vue'),meta:{title:'allMail',name:'all-email',menu:true}},
             {path:'/roles',name:'role',component:()=>import('@/views/role/index.vue'),meta:{title:'permissions',name:'role',menu:true}},
             {path:'/system-settings',name:'sys-setting',component:()=>import('@/views/sys-setting/index.vue'),meta:{title:'SystemSettings',name:'sys-setting',menu:true}},
+            {path:'/statistics',name:'statistics',component:()=>import('@/views/statistics/index.vue'),meta:{title:'数据统计',name:'statistics',menu:true}},
             {path: '/trash', name: 'trash', component: () => import('@/views/trash/index.vue'), meta: {title: 'trash', name: 'trash', menu: true}},
             {
                 path: '/inbox',
@@ -185,3 +186,4 @@ function removeLoading() {
 }
 
 export default router
+

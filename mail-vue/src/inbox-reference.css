@@ -95,3 +95,12 @@
 }
 
 #app .mail-workspace:not(.selecting) .mail-item {padding-left:14px}
+
+/* Pointer-following border only: keep the message surface calm and readable. */
+#app .mail-workspace .mail-item{position:relative;border-left-color:transparent;border-radius:12px;isolation:isolate;background:var(--el-bg-color)}
+#app .mail-workspace .mail-item:hover{background:var(--el-bg-color)}
+#app .mail-workspace .mail-item.selected{background:color-mix(in srgb,var(--el-color-primary) 4%,var(--el-bg-color));border-left-color:transparent}
+#app .mail-workspace .mail-item::after{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;background:radial-gradient(200px circle at var(--pointer-x,50%) var(--pointer-y,50%),var(--el-text-color-secondary),transparent 70%);-webkit-mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#fff 0 0) content-box,linear-gradient(#fff 0 0);mask-composite:exclude;pointer-events:none;opacity:0;transition:opacity 160ms ease;z-index:2}
+#app .mail-workspace .mail-row-actions{background:var(--el-bg-color)}
+@media(hover:hover) and (pointer:fine){#app .mail-workspace .mail-item:hover::after{opacity:1}}
+@media(prefers-reduced-motion:reduce){#app .mail-workspace .mail-item::after{transition:none}}

@@ -1,6 +1,8 @@
 import {addCollection} from '@iconify/vue';
 // Local SVGs keep the mail interface independent of external icon requests.
 const paths={
+ send:'m22 2-7 20-4-9-9-4L22 2z M22 2 11 13',
+ database:'M21 5c0 2-4 3-9 3S3 7 3 5s4-3 9-3 9 1 9 3 M3 5v14c0 2 4 3 9 3s9-1 9-3V5 M3 12c0 2 4 3 9 3s9-1 9-3',
  mail:'M3 5h18v14H3z M3 6l9 7 9-7',
  inbox:'M4 4h16l2 12v4H2v-4L4 4z M2 15h6l2 3h4l2-3h6',
  star:'m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3z',

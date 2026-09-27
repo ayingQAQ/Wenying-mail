@@ -18,6 +18,12 @@ const accounts=useAccountStore(), store=useEmailStore();
 const rows=ref([]), selected=ref(null), loading=ref(false), failed=ref(false), more=ref(false), total=ref(null), search=ref(''), filter=ref('all');
 const acting=ref(new Set()),checked=ref([]),bulkBusy=ref(false);
 const selectionMode=ref(false);
+function spotlight(event){
+ if(event.pointerType==='touch')return;
+ const element=event.currentTarget,rect=element.getBoundingClientRect();
+ element.style.setProperty('--pointer-x',`${event.clientX-rect.left}px`);
+ element.style.setProperty('--pointer-y',`${event.clientY-rect.top}px`);
+}
 function toggleSelection(){if(bulkBusy.value)return;selectionMode.value=!selectionMode.value;checked.value=[];}
 const allChecked=computed(()=>visible.value.length>0&&visible.value.every(row=>checked.value.includes(row.emailId)));
 function toggleAll(value){checked.value=value?visible.value.map(row=>row.emailId):[];}
@@ -94,7 +100,7 @@ onUnmounted(()=>{closed=true;epoch++;unsubscribe?.();clearTimeout(retryTimer);if
    <header class="inbox-subnav"><div class="inbox-list-title"><input v-if="selectionMode" class="mail-select" type="checkbox" aria-label="全选当前列表" :checked="allChecked" :indeterminate="checked.length>0&&!allChecked" :disabled="bulkBusy||!visible.length" @change="toggleAll($event.target.checked)"/><h2>{{starred?'星标邮件':'收件箱'}}</h2><button class="mail-icon-button" aria-label="刷新邮件" :disabled="loading||bulkBusy" @click="load()"><Icon icon="mail-ui:refresh-cw"/></button><span v-if="total!==null" class="inbox-count">{{total}}</span></div><div class="mail-filters"><button :disabled="bulkBusy" :aria-pressed="selectionMode" @click="toggleSelection">{{selectionMode?'完成':'多选'}}</button><button :disabled="bulkBusy" :class="{active:filter==='all'}" @click="filter='all'">全部</button><button :disabled="bulkBusy" :class="{active:filter==='unread'}" @click="filter='unread'">未读</button></div></header>
    <div v-if="checked.length" class="mail-bulk-toolbar" role="status"><span>已选 {{checked.length}} 封</span><button :disabled="bulkBusy" @click="bulkAction('read')">标为已读</button><button v-if="hasPerm('email:delete')" :disabled="bulkBusy" @click="bulkAction('delete')">移到回收站</button><button :disabled="bulkBusy" @click="checked=[]">取消选择</button></div>
    <div class="mail-list-scroll">
-    <article v-for="mail in visible" :key="mail.emailId" class="mail-item" :class="{selected:selected===mail.emailId,unread:mail.unread===0}">
+    <article v-for="mail in visible" :key="mail.emailId" class="mail-item" @pointermove="spotlight" :class="{selected:selected===mail.emailId,unread:mail.unread===0}">
      <input v-if="selectionMode" class="mail-select mail-row-select" type="checkbox" v-model="checked" :value="mail.emailId" :disabled="bulkBusy" :aria-label="`选择邮件：${mail.subject||'无主题'}`" @click.stop/>
      <button class="mail-open" :aria-label="`${mail.name||mail.sendEmail}：${mail.subject||'无主题'}`" :aria-pressed="selected===mail.emailId" @click="select(mail)">
       <div class="mail-item-top"><strong>{{mail.name||mail.sendEmail}}</strong><time>{{fromNow(mail.createTime)}}</time></div>

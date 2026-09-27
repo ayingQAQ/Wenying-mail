@@ -7,6 +7,9 @@ import userContext from '../security/user-context';
 import { mailDetail, mailBody, mailRaw, mailAttachment, privateHeaders } from '../service/private-mail.js';
 import { changeMailFolder,listTrash } from '../service/mail-folders.js';
 import { requestMailDeletion,deletionStatus } from '../service/mail-deletion.js';
+import {mailStatistics} from '../service/mail-statistics.js';
+
+app.get('/email/statistics',async c=>c.json(result.ok(await mailStatistics(c.env.db,userContext.getUserId(c))),200,privateHeaders));
 
 app.get('/email/events',c=>{
  if(!c.env.MAIL_EVENTS)return c.json({code:'EVENTS_UNAVAILABLE'},503);
