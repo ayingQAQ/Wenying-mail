@@ -20,7 +20,7 @@ if(telegram)config.env.TELEGRAM_MAILBOX_ALLOWED=telegram.allowed;
 const telegramLoop=telegram?.run(controller.signal)||Promise.resolve();
 const wakeup=config.consume?queueWakeup():undefined;
 const server=createVpsServer(vpsHandler({worker,...config,wakeup}));
-server.listen(config.port,config.bindAddress,()=>console.log(JSON.stringify({stage:'startup',code:'LISTENING',host:config.bindAddress,port:config.port,consumer:config.consume,maintenance:config.maintenance})));
+server.listen(config.port,config.bindAddress,()=>console.log(JSON.stringify({stage:'startup',code:'LISTENING',host:config.bindAddress,port:config.port,consumer:config.consume,maintenance:config.maintenance,recovery:config.env.MAIL_RECOVERY_ENABLED==='true'})));
 const background=config.consume||config.maintenance||config.env.MAIL_RECOVERY_ENABLED==='true'?runBackground({worker,config,signal:controller.signal,wakeup}):Promise.resolve();
 let stopping=false;
 async function stop(){

@@ -16,13 +16,20 @@ export async function init() {
     if (!settingStore.lang) settingStore.lang = navigator.language.startsWith('zh') ? 'zh' : 'en';
     i18n.global.locale.value = settingStore.lang;
 
-    try {
-        authState.accept(await currentSession());
-    } catch (error) {
+    // Both are read-only bootstrap requests. Wait for both before changing the
+    // auth generation, otherwise the public config response becomes stale.
+    const [sessionResult, configResult] = await Promise.allSettled([
+        currentSession(), websiteConfig(),
+    ]);
+    if (sessionResult.status === 'fulfilled') {
+        authState.accept(sessionResult.value);
+    } else {
+        const error = sessionResult.reason;
         if (error.response?.status !== 401) throw error;
         authState.clear();
     }
-    const setting = await websiteConfig();
+    if (configResult.status === 'rejected') throw configResult.reason;
+    const setting = configResult.value;
     setting.title = 'Wengying mail';
     settingStore.settings = setting;
     settingStore.domainList = setting.domainList;

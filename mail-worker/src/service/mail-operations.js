@@ -45,10 +45,11 @@ export async function retryProcessing(c,id,input) {
 }
 export async function mailboxList(c) {
   const before=positive(c.req.query('before')||Number.MAX_SAFE_INTEGER);
-  return (await c.env.db.prepare(`SELECT a.account_id AS accountId,a.email,a.user_id AS userId,a.domain_id AS domainId,
+  const rows=(await c.env.db.prepare(`SELECT a.account_id AS accountId,a.email,a.user_id AS userId,a.domain_id AS domainId,
     a.receive_enabled AS receiveEnabled,a.is_del AS deleted,a.retired_at AS retiredAt,d.enabled AS domainEnabled
     FROM account a LEFT JOIN domains d ON d.domain_id=a.domain_id WHERE a.account_id<? AND a.user_id=? ORDER BY a.account_id DESC LIMIT 30`)
     .bind(before,c.get('user').userId).all()).results;
+  return rows.map(row=>({...row,admissionPending:c.env.db.admissionPending?.()??false}));
 }
 export async function setMailbox(c,id,input) {
   const db=c.env.db,actor=c.get('user').userId;id=positive(id);

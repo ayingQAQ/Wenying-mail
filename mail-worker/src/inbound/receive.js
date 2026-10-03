@@ -3,7 +3,7 @@ import { commitRaw } from './raw-store.js';
 import { notifyVps } from './notify-vps.js';
 
 export async function receive(message, env, ctx) {
-  const owner = await admitMailbox(env.db, message.to);
+  const owner = await admitMailbox(env.db, message.to,env.MAIL_ADMISSION_DIRECTORY??'false');
   if (!owner) {
     message.setReject('Recipient unavailable');
     return;
@@ -17,9 +17,9 @@ export async function receive(message, env, ctx) {
   }
   // The awaited PUT is the commit point. R2 notifications/reconciliation schedule
   // processing separately; no D1 write or queue availability is needed afterward.
-  await commitRaw(env.r2, message, owner);
+  const reference=await commitRaw(env.r2, message, owner);
   // Best effort only after durable commit; notification failure cannot turn an
   // accepted raw object into an SMTP failure or bypass the durable queue.
   // Complete the bounded notification before returning from the email event.
-  await notifyVps(env);
+  await notifyVps(env,undefined,reference);
 }

@@ -39,10 +39,13 @@ export async function readJobRaw(bucket, lease) {
 }
 
 export async function prepareGeneration(db,bucket,lease) {
+  const started=Date.now();
   if (lease.processor_version!==PROCESSOR_VERSION) throw new Error('PROCESSOR_VERSION_MISMATCH');
   await assertCurrentLease(db,lease);
   const {bytes,rawSha256}=await readJobRaw(bucket,lease);
+  const readFinished=Date.now();
   const parsed=await parseRawMail(bytes);
+  const parseFinished=Date.now();
   const generation=hex(await digest(encoder.encode(`${PROCESSOR_VERSION}\n${rawSha256}`)));
   const prefix=`derived/${lease.delivery_id}/${generation}`;
   const metadata={deliveryId:lease.delivery_id,generation};
@@ -79,5 +82,6 @@ export async function prepareGeneration(db,bucket,lease) {
   const manifestKey=`${prefix}/manifest.json`;
   const stored=await write(manifestKey,JSON.stringify(manifest),'application/json');
   await assertCurrentLease(db,lease);
+  console.log(JSON.stringify({stage:'generation-timing',rawReadMs:readFinished-started,mimeParseMs:parseFinished-readFinished,derivedWriteMs:Date.now()-parseFinished}));
   return {...manifest,manifestKey,manifestSha256:stored.sha256};
 }

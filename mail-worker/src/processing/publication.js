@@ -23,18 +23,24 @@ async function verifyObjects(bucket,lease,manifest) {
   }
   const objects=[manifest.html,manifest.text,...manifest.attachments,
     {key:manifestKey,sha256:manifestSha256,size:encoder.encode(JSON.stringify(stored)).length}];
-  for (const expected of objects) {
+  async function verify(expected) {
     let object;
     try { object=await bucket.head(expected.key); }
     catch { throw new Error('STORAGE_UNAVAILABLE'); }
     if (!object || object.size!==expected.size || !object.checksums?.sha256 || hex(object.checksums.sha256)!==expected.sha256 ||
         object.customMetadata?.deliveryId!==lease.delivery_id || object.customMetadata?.generation!==expectedGeneration) throw new Error('GENERATION_INCOMPLETE');
   }
+  for(let offset=0;offset<objects.length;offset+=4){
+    const results=await Promise.allSettled(objects.slice(offset,offset+4).map(verify));
+    const failed=results.find(result=>result.status==='rejected');if(failed)throw failed.reason;
+  }
 }
 
 export async function publishGeneration(db,bucket,lease,manifest) {
+  const started=Date.now();
   await assertCurrentLease(db,lease);
   await verifyObjects(bucket,lease,manifest);
+  const verified=Date.now();
   const list=await readListMetadata(bucket,manifest);
   const gate=`EXISTS (SELECT 1 FROM mail_processing p WHERE ${leaseCondition()})`;
   const guard=[lease.delivery_id,lease.lease_owner,lease.lease_epoch,lease.processor_version];
@@ -84,5 +90,6 @@ export async function publishGeneration(db,bucket,lease,manifest) {
   ) THEN 1 ELSE json('PUBLICATION_GUARD_LOST') END`).bind(lease.delivery_id,lease.lease_epoch,manifest.generation,manifest.rawSha256,manifest.generation,manifest.attachments.length,JSON.stringify(manifest.attachments)));
   await db.batch(statements);
   const row=await db.prepare('SELECT email_id FROM mail_processing WHERE delivery_id=?').bind(lease.delivery_id).first();
+  console.log(JSON.stringify({stage:'publication-timing',verifyMs:verified-started,publishMs:Date.now()-verified}));
   return {emailId:row.email_id,generation:manifest.generation};
 }

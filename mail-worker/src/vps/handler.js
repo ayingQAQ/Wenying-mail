@@ -1,4 +1,5 @@
 import {timingSafeEqual} from 'node:crypto';
+import {decodeProcessingEvent} from '../processing/queue-event.js';
 const deny=(code,status)=>Response.json({code},{status,headers:{'Cache-Control':'no-store'}});
 // The public origin is pinned by configuration, never taken from forwarded
 // headers. The application verifies its session and the configured login mode.
@@ -15,8 +16,14 @@ export function vpsHandler({worker,env,ingressHost,originToken,wakeToken,wakeup,
       const key=request.headers.get('X-Cloudmail-Wake-Token');
       if(!wakeup||!wakeToken||typeof key!=='string'||!/^[a-f0-9]{64}$/.test(key)||!timingSafeEqual(Buffer.from(key),Buffer.from(wakeToken)))return deny('WAKE_AUTH_REQUIRED',403);
       if(request.method!=='POST'||url.search)return deny('INVALID_WAKE_REQUEST',400);
-      // No message bodies, object keys or user identities are accepted here.
-      if(request.body)await request.body.cancel();
+      // Authenticated hints are only references to already committed raw objects.
+      // Processing re-reads authoritative R2 metadata and checks local ownership.
+      if(request.body){
+        const reader=request.body.getReader(),chunks=[];let size=0;
+        try{for(;;){const part=await reader.read();if(part.done)break;size+=part.value.length;if(size>1024){await reader.cancel();return deny('INVALID_WAKE_REQUEST',400);}chunks.push(part.value);}
+          const bytes=Buffer.concat(chunks);if(bytes.length){const body=JSON.parse(bytes.toString('utf8'));const reference=decodeProcessingEvent(body,{account:env.MAIL_CLOUDFLARE_ACCOUNT,bucket:env.MAIL_R2_BUCKET});wakeup.offer?.({version:1,kind:'process',rawKey:reference.rawKey,deliveryId:reference.deliveryId});}
+        }catch{return deny('INVALID_WAKE_REQUEST',400);}finally{reader.releaseLock();}
+      }
       wakeup.wake();
       console.log('{"stage":"queue-wake","code":"ACCEPTED"}');
       return new Response(null,{status:202,headers:{'Cache-Control':'no-store'}});

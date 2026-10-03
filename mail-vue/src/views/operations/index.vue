@@ -94,7 +94,7 @@ onMounted(async()=>{try{admin.value=(await http.get('/mailOperations/capabilitie
           <article v-for="row in visibleMailboxes" :key="row.accountId" :data-mailbox-id="row.accountId" class="managed-mailbox" :style="rowDragStyle(row.accountId)" :class="{'dragging':drag?.active&&drag.id===row.accountId}">
             <button class="mailbox-drag-handle" type="button" :disabled="busy" :aria-label="`拖动排序 ${row.email}`" title="拖动排序，也可用上下方向键移动" @dragstart.prevent @pointerdown="dragStart($event,row)" @pointermove="dragMove" @pointerup="dragEnd($event)" @pointercancel="dragEnd($event,true)" @lostpointercapture="dragEnd($event,true)" @keydown.up.prevent="moveMailbox(row,-1)" @keydown.down.prevent="moveMailbox(row,1)" @keydown.esc="drag&&dragEnd({pointerId:drag.pointer},true)"><svg viewBox="0 0 16 24" aria-hidden="true"><circle v-for="n in 6" :key="n" :cx="n%2?5:11" :cy="4+Math.floor((n-1)/2)*8" r="1.5" fill="currentColor"/></svg></button>
             <strong class="managed-address" :title="row.email">{{row.email}}</strong>
-            <span class="managed-status">{{row.receiveEnabled&&row.domainEnabled?'可收信':'禁收'}}</span>
+            <span class="managed-status">{{row.admissionPending?'待同步':row.receiveEnabled&&row.domainEnabled?'可收信':'禁收'}}</span>
             <div class="managed-actions">
               <el-dropdown class="mailbox-more" trigger="click" @command="command=>command==='delete'?remove(row):mailbox(row,row.receiveEnabled?'disable':'enable')">
                 <el-button :aria-label="`更多操作 ${row.email}`" :disabled="busy">更多</el-button>
